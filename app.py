@@ -4,6 +4,7 @@ from flask_sock import Sock
 
 app = Flask(__name__)
 sock = Sock(app)
+clients = []
 
 
 @app.route('/')
@@ -12,14 +13,19 @@ def hello_world():
 
 
 @sock.route('/echo')
-def echo_socket(sock):
-    while True:
-        message = sock.receive()
-        sock.send(message)
+def echo_socket(ws):
+    clients.append(ws)
+    while ws.connected:
+        message = ws.receive()
+        ws.send(message)
+    clients.remove(ws)
 
 
 @app.route('/commande/<id>', methods=['GET'])
 def commande(id):
+    for i in clients:
+        if i.connected:
+            i.send(id)
     match id:
         case '0':
             return 'up'
