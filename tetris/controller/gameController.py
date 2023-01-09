@@ -21,8 +21,6 @@ class GameController:
         self.playing = True
         self.gameboard = gameboard
         self.sidebar = sidebar
-        self.gameOver = False
-        self.paused = False
         self.lastMove = 0
         self.speed = 0
 
@@ -30,7 +28,6 @@ class GameController:
         match event_type:
             case MoveEnum.PAUSE:
                 self.gameboard.pause()
-                self.paused = not self.paused
             case MoveEnum.RETRY:
                 self.gameboard.newGame()
             case MoveEnum.QUIT:
@@ -51,7 +48,7 @@ class GameController:
     # plays the game of tetris
     def playGame(self):
         while self.playing:
-            if not self.paused:
+            if not self.gameboard.paused and not self.gameboard.isGameOver():
                 # moving the tetris piece
                 ms = time.time() * 1000
                 if ms > self.lastMove + 110:
@@ -60,3 +57,4 @@ class GameController:
 
                 if self.gameboard.needsTetromino():
                     self.gameboard.setActive(self.sidebar.update())
+            time.sleep(0.5)
