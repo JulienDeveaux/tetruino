@@ -14,6 +14,7 @@ For the arduino :
 
 
 # Contributors
+|Last Name|First Name|
 |--|--|
 | *Deveaux* | *Julien*|
 | *Dubois* | *Dimitri* |
