@@ -1,11 +1,28 @@
+import random
+import threading
+import time
+import json
+
 from flask import Flask
 from flask import render_template
 from flask_sock import Sock
 
+from tetris.service import TetrisService
+
 app = Flask(__name__)
 sock = Sock(app)
 clients = []
+tetris_service = TetrisService()
 
+@app.route('/test')
+def test():
+    return tetris_service.get_state()
+
+
+@app.route('/testStart')
+def testStart():
+    tetris_service.start()
+    return "started"
 
 @app.route('/')
 def hello_world():
