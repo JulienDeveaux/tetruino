@@ -17,10 +17,10 @@ class TetrisService:
         self.sidebar = Sidebar()
         self.gameController = GameController(self.gameboard, self.sidebar)
 
-    def start(self):
+    def start(self, callback):
         def main():
             # play the game
-            self.gameController.playGame()
+            self.gameController.playGame(callback)
 
         thread = threading.Thread(target=main)
 
@@ -31,11 +31,19 @@ class TetrisService:
         return thread
 
     def get_state(self):
-
+        self.gameboard.active.to_json()
         return {
             'titles': self.gameboard.get_state_titles(),
             'isGameover': self.gameboard.isGameOver(),
             'isPaused': self.gameboard.paused,
             'nexts': [t.to_json() for t in self.sidebar.upNext],
-            'score': self.gameboard.score
+            'score': self.gameboard.score,
+            'current': self.gameboard.active.to_json(),
+            'currentCoord': self.gameboard.activeCoord
         }
+
+    def move(self, direction):
+        self.gameboard.moveInDirection(direction)
+
+    def rotate(self):
+        self.gameboard.rotateActive("right")

@@ -46,15 +46,17 @@ class GameController:
                 self.gameboard.moveInDirection("right")
 
     # plays the game of tetris
-    def playGame(self):
+    def playGame(self, callbak):
         while self.playing:
             if not self.gameboard.paused and not self.gameboard.isGameOver():
                 # moving the tetris piece
                 ms = time.time() * 1000
-                if ms > self.lastMove + 110:
+                if ms > self.lastMove + 500:
                     self.gameboard.moveInDirection("down")
                     self.lastMove = ms
 
                 if self.gameboard.needsTetromino():
                     self.gameboard.setActive(self.sidebar.update())
-            time.sleep(0.5)
+            if callbak is not None and callable(callbak):
+                callbak()
+            time.sleep(0.2)
