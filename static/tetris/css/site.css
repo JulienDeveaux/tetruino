@@ -52,12 +52,7 @@ article {
   padding-bottom : 25px; 
 }
 
-#idGameDiv {
-  height:500px;
-  width:300px;
-  margin:20px auto;
-  display: block;
-  margin: auto;
-  border: 1px solid black;
+#tetrisDiv {
+  text-align: center;
 }
 
