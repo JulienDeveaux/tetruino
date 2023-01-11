@@ -12,6 +12,7 @@ class TetrisService:
         self.columns = Configs.columns
         self.rows = Configs.rows
         self.name = Configs.name
+        self.started = False
 
         self.gameboard = Gameboard(Difficulty.BEGINNER, self.columns, self.rows)
         self.sidebar = Sidebar()
@@ -27,6 +28,7 @@ class TetrisService:
         thread.daemon = True
 
         thread.start()
+        self.started = True
 
         return thread
 

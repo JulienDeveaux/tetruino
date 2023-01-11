@@ -50,6 +50,9 @@ def echo_socket(ws):
 def ws_game(ws):
     clients.append(ws)
 
+    if not tetris_service.started:
+        testStart()
+
     ws.send(json.dumps(tetris_service.get_state()))
 
     while ws.connected:
