@@ -186,7 +186,7 @@ class Gameboard:
         self.active = GameUtils().getRandomTetromino()
         self.activeCoord = [3, -1]
         self.paused = False
-        self.usedHold = False;
+        self.usedHold = False
         self.hold = None
 
     # gets the current score of the game

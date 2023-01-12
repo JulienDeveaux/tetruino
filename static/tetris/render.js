@@ -62,17 +62,52 @@ class TetrisRender
 
         if (data.isGameover === true)
         {
-            console.log("Tetris getStatus : perdu !!!");
-
-            this.ctx.strokeText("Perdu!", this.width/2- this.ctx.measureText("Perdu!").width/2, this.height/3);
+            this.#drawMessage("Perdu !", "red", 30);
+        }
+        else if(data.isPaused)
+        {
+            this.#drawMessage("Jeu en pause", "cyan", 30);
         }
 
         this.ctx.strokeRect(0, 0, this.width, this.height);
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     #drawBlock(x, y)
     {
         this.ctx.fillRect(this.block_w * x, this.block_h * y, this.block_w - 1, this.block_h - 1);
         this.ctx.strokeRect(this.block_w * x, this.block_h * y, this.block_w - 1, this.block_h - 1);
+    }
+
+    /**
+     * @param {string} txt
+     * @param {string | CanvasGradient | CanvasPattern} fillColor
+     * @param {number | undefined} size
+     */
+    #drawMessage(txt, fillColor = "cyan", size= undefined)
+    {
+        const oldFill = this.ctx.fillStyle;
+        const oldSize = this.ctx.font;
+
+        this.ctx.fillStyle = fillColor;
+
+        if(size)
+            this.ctx.font = this.ctx.font.replace(/\d+px/, size + "px");
+
+        const txtDim = this.ctx.measureText(txt);
+        const x = this.width/2 - txtDim.width/2;
+        const y = this.height/3;
+        const txtHeigth = (txtDim.actualBoundingBoxDescent + txtDim.actualBoundingBoxAscent);
+
+        this.ctx.fillRect(x - 10, y - txtHeigth - 5, txtDim.width + 15, txtHeigth + 15)
+        this.ctx.strokeRect(x - 10, y - txtHeigth - 5, txtDim.width + 15, txtHeigth + 15)
+        this.ctx.fillStyle = "black";
+        this.ctx.fillText(txt, x, y);
+        this.ctx.fillStyle = oldFill;
+        this.ctx.font = oldSize;
+
     }
 }

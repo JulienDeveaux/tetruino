@@ -32,5 +32,9 @@ document.addEventListener("DOMContentLoaded", () =>
             fetch("/commande/" + 1);
        else if(e.key == "d")
             fetch("/commande/" + 3);
+       else if (e.key == "r")
+           fetch("/commande/" + 5);
+       else if (e.key == "p")
+           fetch("/commande/" + 4);
     });
 }, false);

@@ -22,13 +22,15 @@ def test():
 def test_front():
     return render_template('test-front.html')
 
+
+def callback():
+    for ws in clients:
+        if ws.connected:
+            ws.send(json.dumps(tetris_service.get_state()))
+
+
 @app.route('/testStart')
 def testStart():
-    def callback():
-        for ws in clients:
-            if ws.connected:
-                ws.send(json.dumps(tetris_service.get_state()))
-
     tetris_service.start(callback)
     return "started"
 
@@ -68,7 +70,7 @@ def commande(id):
             tetris_service.rotate()
             return 'up'
         case '1':
-            tetris_service.move("down")
+            tetris_service.descent()
             return 'down'
         case '2':
             tetris_service.move("left")
@@ -76,6 +78,13 @@ def commande(id):
         case '3':
             tetris_service.move("right")
             return 'right'
+        case '4':
+            tetris_service.pause()
+            callback()
+            return 'pause'
+        case '5':
+            tetris_service.restart()
+            return 'restart'
         case _:
             return 'error'
 

@@ -49,3 +49,12 @@ class TetrisService:
 
     def rotate(self):
         self.gameboard.rotateActive("right")
+
+    def pause(self):
+        self.gameboard.pause()
+
+    def restart(self):
+        self.gameboard.newGame()
+
+    def descent(self):
+        self.gameController.descent()

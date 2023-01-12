@@ -60,3 +60,10 @@ class GameController:
             if callbak is not None and callable(callbak):
                 callbak()
             time.sleep(0.2)
+
+    def descent(self):
+        while self.gameboard.canMove("down"):
+            ms = time.time() * 1000
+            if ms > self.lastMove + 5:
+                self.lastMove = ms
+                self.gameboard.moveInDirection("down")
