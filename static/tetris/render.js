@@ -48,14 +48,17 @@ class TetrisRender
             }
         }
 
-        for ( let y = 0; y < 4; ++y )
+        if(data.current)
         {
-            for ( let x = 0; x < 4; ++x )
+            for ( let y = 0; y < 4; ++y )
             {
-                if ( data.current.tetromino[ y ][ x ] )
+                for ( let x = 0; x < 4; ++x )
                 {
-                    this.ctx.fillStyle = this.colors[ data.current.tetromino[ y ][ x ] - 1 ];
-                    this.#drawBlock( data.currentCoord[0] + x, data.currentCoord[1] + y );
+                    if ( data.current.tetromino[ y ][ x ] )
+                    {
+                        this.ctx.fillStyle = this.colors[ data.current.tetromino[ y ][ x ] - 1 ];
+                        this.#drawBlock( data.currentCoord[0] + x, data.currentCoord[1] + y );
+                    }
                 }
             }
         }

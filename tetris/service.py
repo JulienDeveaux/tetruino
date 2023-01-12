@@ -38,14 +38,13 @@ class TetrisService:
         return thread
 
     def get_state(self):
-        self.gameboard.active.to_json()
         return {
             'titles': self.gameboard.get_state_titles(),
             'isGameover': self.gameboard.isGameOver(),
             'isPaused': self.gameboard.paused,
             'nexts': [t.to_json() for t in self.sidebar.upNext],
             'score': self.gameboard.score,
-            'current': self.gameboard.active.to_json(),
+            'current': self.gameboard.active.to_json() if self.gameboard.active is not None else None,
             'currentCoord': self.gameboard.activeCoord
         }
 
