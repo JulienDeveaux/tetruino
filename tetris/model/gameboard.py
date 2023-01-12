@@ -96,6 +96,9 @@ class Gameboard:
 
     # determines if the current piece can move in the given direction
     def canMove(self, direction):
+        if self.active is None:
+            return False
+
         active = self.active.getMatrix()
         for r in range(4):
             for c in range(4):

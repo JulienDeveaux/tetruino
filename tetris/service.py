@@ -21,7 +21,12 @@ class TetrisService:
     def start(self, callback):
         def main():
             # play the game
-            self.gameController.playGame(callback)
+            try:
+                self.gameController.playGame(callback)
+            except BaseException as e:
+                self.started = False
+                print(e)
+                return
 
         thread = threading.Thread(target=main)
 
