@@ -21,20 +21,23 @@ document.addEventListener("DOMContentLoaded", () =>
     });
 
     /* for test in dev */
-    document.body.addEventListener("keypress", (e) =>
+    if(isDev)
     {
-        console.log(e.key);
-       if(e.key == "q")
-            fetch("/commande/" + 2);
-       else if(e.key == "z")
-            fetch("/commande/" + 0);
-       else if(e.key == "s")
-            fetch("/commande/" + 1);
-       else if(e.key == "d")
-            fetch("/commande/" + 3);
-       else if (e.key == "r")
-           fetch("/commande/" + 5);
-       else if (e.key == "p")
-           fetch("/commande/" + 4);
-    });
+        document.body.addEventListener("keypress", (e) =>
+        {
+            console.log(e.key);
+           if(e.key == "q")
+                fetch("/commande/" + 2);
+           else if(e.key == "z")
+                fetch("/commande/" + 0);
+           else if(e.key == "s")
+                fetch("/commande/" + 1);
+           else if(e.key == "d")
+                fetch("/commande/" + 3);
+           else if (e.key == "r")
+               fetch("/commande/" + 5);
+           else if (e.key == "p")
+               fetch("/commande/" + 4);
+        });
+    }
 }, false);

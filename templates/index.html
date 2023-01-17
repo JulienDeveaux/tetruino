@@ -1,32 +1,29 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Flask-Sock Demo</title>
-  </head>
-  <body>
-    <h1>Flask-Sock Demo</h1>
-    <div id="log"></div>
-    <br>
-    <form id="form">
-      <label for="text">Input: </label>
-      <input type="text" id="text" autofocus>
-    </form>
-    <script>
-      const log = (text, color) => {
-        document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
-      };
+<!DOCTYPE html>
 
-      const socket = new WebSocket('ws://' + location.host + '/echo');
-      socket.addEventListener('message', ev => {
-        log('<<< ' + ev.data, 'blue');
-      });
-      document.getElementById('form').onsubmit = ev => {
-        ev.preventDefault();
-        const textField = document.getElementById('text');
-        log('>>> ' + textField.value, 'red');
-        socket.send(textField.value);
-        textField.value = '';
-      };
-    </script>
-  </body>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/tetris/css/site.css"/>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width"/>
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    </style>
+
+    <script src="/tetris/render.js"></script>
+    <script src="/tetris/tetris.js"></script>
+</head>
+
+<body>
+<section id="content">
+
+    <div id="tetrisDiv">
+    </div>
+
+
+
+</section>
+</body>
 </html>

@@ -14,9 +14,11 @@ sock = Sock(app)
 clients = []
 tetris_service = TetrisService()
 
-@app.route('/test')
-def test():
-    return tetris_service.get_state()
+
+@app.route("/", methods=['GET'])
+def index():
+    return render_template('index.html')
+
 
 @app.route('/test-front')
 def test_front():
@@ -29,23 +31,9 @@ def callback():
             ws.send(json.dumps(tetris_service.get_state()))
 
 
-@app.route('/testStart')
-def testStart():
-    tetris_service.start(callback)
-    return "started"
-
 @app.route('/')
 def hello_world():
     return render_template('index.html', name="Hi mom")
-
-
-@sock.route('/echo')
-def echo_socket(ws):
-    clients.append(ws)
-    while ws.connected:
-        message = ws.receive()
-        ws.send(message)
-    clients.remove(ws)
 
 
 @sock.route('/ws-game')
@@ -53,7 +41,8 @@ def ws_game(ws):
     clients.append(ws)
 
     if not tetris_service.started:
-        testStart()
+        tetris_service.start(callback)  # auto start game with callback if not started
+        tetris_service.pause()  # start in pause mode
 
     ws.send(json.dumps(tetris_service.get_state()))
 
@@ -62,9 +51,9 @@ def ws_game(ws):
 
     clients.remove(ws)
 
+
 @app.route('/commande/<id>', methods=['GET'])
 def commande(id):
-
     match id:
         case '0':
             tetris_service.rotate()
