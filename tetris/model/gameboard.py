@@ -96,7 +96,7 @@ class Gameboard:
 
     # determines if the current piece can move in the given direction
     def canMove(self, direction):
-        if self.active is None:
+        if self.active is None or self.paused or self.gameOver:
             return False
 
         active = self.active.getMatrix()
@@ -150,6 +150,9 @@ class Gameboard:
 
     # rotate the active piece in direction given
     def rotateActive(self, direction):
+        if self.paused or self.gameOver:
+            return
+
         typeIndex = self.active.getType()
         rotationIndex = self.active.getRotation()
         if direction == "right" and self.canRotate("right"):
