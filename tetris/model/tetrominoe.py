@@ -13,19 +13,19 @@ class Tetrominoe:
         self.rotation = rotation
 
     # returns the tetromino matrix
-    def getMatrix(self):
+    def get_matrix(self):
         return self.tetromino
 
     # gets the type of this tetromino
-    def getType(self):
+    def get_type(self):
         return self.type
 
     # gets the current rotation of this tetromino
-    def getRotation(self):
+    def get_rotation(self):
         return self.rotation
 
     # transforms the tetromino to the new type and rotation
-    def transformTetromino(self, type, rotation):
+    def transform_tetromino(self, type, rotation):
         self.tetromino = Configs.tetrominoes[type][rotation]
         self.type = type
         self.rotation = rotation

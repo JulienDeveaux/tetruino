@@ -28,7 +28,7 @@ class TetrisService:
         def main():
             # play the game
             try:
-                self.gameController.playGame(callback)
+                self.gameController.play_game(callback)
             except BaseException as e:
                 self.started = False
                 print(e)
@@ -46,7 +46,7 @@ class TetrisService:
     def get_state(self):
         return {
             'titles': self.gameboard.get_state_titles(),
-            'isGameover': self.gameboard.isGameOver(),
+            'isGameover': self.gameboard.is_game_over(),
             'isPaused': self.gameboard.paused,
             'nexts': [t.to_json() for t in self.sidebar.upNext],
             'score': self.gameboard.score,
@@ -55,17 +55,17 @@ class TetrisService:
         }
 
     def move(self, direction):
-        self.gameboard.moveInDirection(direction)
+        self.gameboard.move_in_direction(direction)
 
     def rotate(self):
-        self.gameboard.rotateActive("right")
+        self.gameboard.rotate_active("right")
 
     def pause(self):
         self.gameboard.pause()
         self.__callback()
 
     def restart(self):
-        self.gameboard.newGame()
+        self.gameboard.new_game()
 
     def descent(self):
         self.gameController.descent()

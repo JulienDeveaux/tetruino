@@ -1,6 +1,7 @@
 # enum for determining game difficulty
 from enum import Enum
 
+
 class Difficulty(Enum):
     # slow blocks, easy to work with pieces
     BEGINNER = 1

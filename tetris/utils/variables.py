@@ -1,5 +1,7 @@
 # class for configuration variables
 import math
+
+
 class Configs:
     columns = 10
     rows = 20
@@ -11,7 +13,7 @@ class Configs:
     fps = 30
 
     tetrominoes = [
-        #LINE-SHAPE
+        # LINE-SHAPE
         [
             [
                 [0, 0, 0, 0],
