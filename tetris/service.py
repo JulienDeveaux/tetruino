@@ -1,4 +1,7 @@
 import threading
+import time
+
+from flask import json
 
 from tetris.model.gameboard import Gameboard
 from tetris.model.sidebar import Sidebar
@@ -17,6 +20,9 @@ class TetrisService:
         self.gameboard = Gameboard(Difficulty.BEGINNER, self.columns, self.rows)
         self.sidebar = Sidebar()
         self.gameController = GameController(self.gameboard, self.sidebar)
+
+        self.gamepads = []
+        self.clients = []
 
     def start(self, callback):
         def main():
@@ -56,9 +62,45 @@ class TetrisService:
 
     def pause(self):
         self.gameboard.pause()
+        self.__callback()
 
     def restart(self):
         self.gameboard.newGame()
 
     def descent(self):
         self.gameController.descent()
+
+    def __callback(self):
+        for ws in self.clients:
+            if ws.connected:
+                ws.send(json.dumps(self.get_state()))
+
+    def register_websocket(self, ws):
+        self.clients.append(ws)
+
+        if not self.started:
+            self.start(self.__callback)  # auto start game with callback if not started
+            self.pause()  # start in pause mode
+
+        ws.send(json.dumps(self.get_state()))
+
+        while ws.connected:
+            time.sleep(1)
+
+        self.clients.remove(ws)
+
+    def unregister_gamedpad(self, remote_addr):
+        tmpGamepads = self.gamepads.copy()
+
+        for gamepad in tmpGamepads:
+            if gamepad['addr'] == remote_addr:
+                self.gamepads.remove(gamepad)
+
+    def register_gamepad(self, remote_addr):
+        try:
+            if remote_addr['addr'].lenth > 0 and remote_addr['port'] > 5000:
+                self.gamepads.append(remote_addr)
+            else:
+                raise Exception('cannot add remote addr with ' + remote_addr['addr'] + str(remote_addr['port']))
+        except BaseException:
+            print('cannot add remote_add')

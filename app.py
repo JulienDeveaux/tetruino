@@ -1,9 +1,4 @@
-import random
-import threading
-import time
-import json
-
-from flask import Flask
+from flask import Flask, request
 from flask import render_template
 from flask_sock import Sock
 
@@ -11,7 +6,6 @@ from tetris.service import TetrisService
 
 app = Flask(__name__, static_url_path="", static_folder="./static")
 sock = Sock(app)
-clients = []
 tetris_service = TetrisService()
 
 
@@ -25,12 +19,6 @@ def test_front():
     return render_template('test-front.html')
 
 
-def callback():
-    for ws in clients:
-        if ws.connected:
-            ws.send(json.dumps(tetris_service.get_state()))
-
-
 @app.route('/')
 def hello_world():
     return render_template('index.html', name="Hi mom")
@@ -38,18 +26,30 @@ def hello_world():
 
 @sock.route('/ws-game')
 def ws_game(ws):
-    clients.append(ws)
+    tetris_service.register_websocket(ws)
 
-    if not tetris_service.started:
-        tetris_service.start(callback)  # auto start game with callback if not started
-        tetris_service.pause()  # start in pause mode
 
-    ws.send(json.dumps(tetris_service.get_state()))
+@app.route('/register_gamepad', methods=['GET'])
+def register_gamedpad():
+    port = request.args.get('port', default=6511, type=int)
 
-    while ws.connected:
-        time.sleep(1)
+    tetris_service.register_gamepad({
+        'addr': request.remote_addr,
+        'port': port
+    })
 
-    clients.remove(ws)
+    print(request.remote_addr + ':' + str(port))
+
+    return 'gamepad registered'
+
+
+@app.route('/unregister_gamepad', methods=['GET'])
+def unregister_gamedpad():
+    tetris_service.unregister_gamedpad(request.remote_addr)
+
+    print(request.remote_addr)
+
+    return 'gamepad unregistered'
 
 
 @app.route('/commande/<id>', methods=['GET'])
@@ -69,7 +69,6 @@ def commande(id):
             return 'right'
         case '4':
             tetris_service.pause()
-            callback()
             return 'pause'
         case '5':
             tetris_service.restart()
