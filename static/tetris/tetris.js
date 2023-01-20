@@ -4,13 +4,13 @@ document.addEventListener("DOMContentLoaded", () =>
 
     const screenHeight = window.innerHeight - 28*2;
 
-    canvas.setAttribute("width", (screenHeight * 0.6)+"px");
+    canvas.setAttribute("width", (screenHeight)+"px");
     canvas.setAttribute("height", screenHeight + "px");
 
     document.getElementById("tetrisDiv").appendChild(canvas);
     const ctx  = canvas.getContext('2d');
 
-    const tetrisRender = new TetrisRender(ctx);
+    const tetrisRender = new TetrisRender(ctx, screenHeight * 0.6, screenHeight * 0.4);
 
     const socket = new WebSocket('ws://' + location.host + '/ws-game');
 
