@@ -27,7 +27,7 @@ class TetrisRender
     }
 
     /**
-     * @param {{isGameover: boolean, score: number, isPaused: boolean, titles: [], current: {tetromino: [], type: number, rotation: number}, currentCoord: []}} data
+     * @param {{isGameover: boolean, score: number, isPaused: boolean, titles: [], current: {tetromino: [], type: number, rotation: number}, currentCoord: [], nexts: []}} data
      */
     render(data)
     {
@@ -82,6 +82,44 @@ class TetrisRender
 
             this.ctx.fillStyle = "black";
             this.ctx.fillText(str, this.width + (this.textWidth/2-textSize.width/2), this.height - 15);
+        }
+
+        if(data.nexts)
+        {
+            let str = "Prochain:";
+
+            this.ctx.font = this.ctx.font.replace(/\d+px/, 12 + "px");
+
+            const textSize = this.ctx.measureText(str);
+
+            this.ctx.fillStyle = "black";
+            this.ctx.fillText(str, this.width + (this.textWidth/2-textSize.width/2), 15);
+
+            for (let i = 0; i < data.nexts.length; i++)
+            {
+                const next = data.nexts[i].tetromino;
+
+                const widthNext = this.textWidth / next.length - 5;
+
+                for ( let y = 0; y < 4; ++y )
+                {
+                    for ( let x = 0; x < 4; ++x )
+                    {
+                        if ( next[ y ][ x ] )
+                        {
+                            this.ctx.fillStyle = this.colors[ next[ y ][ x ] - 1 ];
+
+                            this.ctx.fillRect((this.width + 5 ) + (widthNext*x), (15 + textSize.actualBoundingBoxDescent + textSize.actualBoundingBoxAscent) + (widthNext* y) + (widthNext*4 + 5) * i, widthNext - 1, widthNext - 1);
+                            this.ctx.strokeRect((this.width + 5 ) + (widthNext*x), (15 + textSize.actualBoundingBoxDescent + textSize.actualBoundingBoxAscent) + (widthNext* y) + (widthNext*4 + 5) * i, widthNext, widthNext);
+                        }
+                    }
+                }
+
+                if(i < data.nexts.length-1)
+                    this.ctx.setLineDash([7.5]);
+                this.ctx.strokeRect(this.width, (15 + textSize.actualBoundingBoxDescent + textSize.actualBoundingBoxAscent) + (widthNext* 4) + (widthNext*4 + 5) * i + 2.5, this.textWidth, 0);
+                this.ctx.setLineDash([]);
+            }
         }
 
         this.ctx.strokeRect(0, 0, this.width, this.height);
