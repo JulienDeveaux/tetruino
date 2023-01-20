@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, url_for
 from flask import render_template
 from flask_sock import Sock
 
@@ -6,7 +6,7 @@ from tetris.service import TetrisService
 
 app = Flask(__name__, static_url_path="", static_folder="./static")
 sock = Sock(app)
-tetris_service = TetrisService()
+tetris_service = TetrisService(app)
 
 
 @app.route("/", methods=['GET'])
@@ -17,11 +17,6 @@ def index():
 @app.route('/test-front')
 def test_front():
     return render_template('test-front.html')
-
-
-@app.route('/')
-def hello_world():
-    return render_template('index.html', name="Hi mom")
 
 
 @sock.route('/ws-game')
@@ -38,10 +33,7 @@ def register_gamedpad():
         'port': port
     })
 
-    print(request.remote_addr + ':' + str(port))
-
     return 'gamepad registered'
-
 
 @app.route('/unregister_gamepad', methods=['GET'])
 def unregister_gamedpad():

@@ -1,6 +1,7 @@
 import threading
 import time
 
+import requests
 from flask import json
 
 from tetris.model.gameboard import Gameboard
@@ -11,7 +12,8 @@ from tetris.utils.variables import Configs
 
 
 class TetrisService:
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
         self.columns = Configs.columns
         self.rows = Configs.rows
         self.name = Configs.name
@@ -31,7 +33,7 @@ class TetrisService:
                 self.gameController.play_game(callback)
             except BaseException as e:
                 self.started = False
-                print(e)
+                self.app.logger.error(f"BaseException : {e}")
                 return
 
         thread = threading.Thread(target=main)
@@ -72,9 +74,31 @@ class TetrisService:
         self.gameController.descent()
 
     def __callback(self):
+        state = self.get_state()
+        for pad in self.gamepads:
+            if state['isGameover']:
+                requests.get(
+                    url=f"http://{pad['addr']}:80?data=0&score=" + str(state['score']),
+                    verify=False
+                )
+            elif state['isPaused']:
+                requests.get(
+                    url=f"http://{pad['addr']}:80?data=1&score=" + str(state['score']),
+                    verify=False
+                )
+            elif state['boardCleared']:
+                requests.get(
+                    url=f"http://{pad['addr']}:80?data=2&score=" + str(state['score']),
+                    verify=False
+                )
+            else:
+                requests.get(
+                    url=f"http://{pad['addr']}:80?data=-1&score=" + str(state['score']),
+                    verify=False
+                )
         for ws in self.clients:
             if ws.connected:
-                ws.send(json.dumps(self.get_state()))
+                ws.send(json.dumps(state))
 
     def register_websocket(self, ws):
         self.clients.append(ws)
@@ -99,9 +123,9 @@ class TetrisService:
 
     def register_gamepad(self, remote_addr):
         try:
-            if remote_addr['addr'].lenth > 0 and remote_addr['port'] > 5000:
+            if len(remote_addr['addr']) > 0 and remote_addr['port'] > 5000:
                 self.gamepads.append(remote_addr)
             else:
                 raise Exception('cannot add remote addr with ' + remote_addr['addr'] + str(remote_addr['port']))
-        except BaseException:
-            print('cannot add remote_add')
+        except BaseException as e:
+            self.app.logger.error(f'cannot add remote_add : {e}')
