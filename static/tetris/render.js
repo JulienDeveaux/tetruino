@@ -2,10 +2,11 @@ class TetrisRender
 {
     /**
      * @param {CanvasRenderingContext2D} ctx
+     * @param confettiCanvas
      * @param rows
      * @param cols
      */
-    constructor(ctx, rows = 20, cols = 10)
+    constructor(ctx, confettiCanvas,  rows = 20, cols = 10)
     {
         this.colors = ['cyan', 'orange', 'blue', 'yellow', 'red', 'green', 'purple'];
 
@@ -19,14 +20,7 @@ class TetrisRender
         this.cols = cols;
         this.rows = rows;
 
-        console.log({
-            width: this.width,
-            height: this.height,
-            block_h: this.block_h,
-            block_w: this.block_w,
-            cols: this.cols,
-            rows: this.rows
-        })
+        this.jsConfetti = new JSConfetti({ confettiCanvas });
     }
 
     /**
@@ -66,6 +60,7 @@ class TetrisRender
         if (data.isGameover === true)
         {
             this.#drawMessage("Perdu !", "red", 30);
+            this.jsConfetti.addConfetti();
         }
         else if(data.isPaused)
         {

@@ -10,7 +10,14 @@ document.addEventListener("DOMContentLoaded", () =>
     document.getElementById("tetrisDiv").appendChild(canvas);
     const ctx  = canvas.getContext('2d');
 
-    const tetrisRender = new TetrisRender(ctx);
+    const confettiCanvas = document.createElement("canvas");
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    confettiCanvas.style.position = 'absolute';
+    confettiCanvas.style.top = '0 px';
+    confettiCanvas.style.left = '0 px';
+
+    const tetrisRender = new TetrisRender(ctx, confettiCanvas);
 
     const socket = new WebSocket('ws://' + location.host + '/ws-game');
 
