@@ -51,7 +51,8 @@ class TetrisService:
             'nexts': [t.to_json() for t in self.sidebar.upNext],
             'score': self.gameboard.score,
             'current': self.gameboard.active.to_json() if self.gameboard.active is not None else None,
-            'currentCoord': self.gameboard.activeCoord
+            'currentCoord': self.gameboard.activeCoord,
+            'boardCleared': self.gameboard.boardCleared
         }
 
     def move(self, direction):

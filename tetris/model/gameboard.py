@@ -24,6 +24,7 @@ class Gameboard:
         self.usedHold = False
         self.hold = None
         self.lastMove = 0
+        self.boardCleared = False
 
     # generates the game board tiles
     def generate_tiles(self):
@@ -69,6 +70,7 @@ class Gameboard:
             else:
                 fullRow.append(False)
 
+        self.boardCleared = False
         rowCount = 0
         for i in range(len(fullRow)):
             isFullRow = fullRow[i]
@@ -76,6 +78,7 @@ class Gameboard:
                 rowCount += 1
                 self.gameTiles.pop(i)
                 self.gameTiles.insert(0, new_row())
+                self.boardCleared = True
         self.update_score(rowCount)
 
     # places the Tetromino onto the gameboard
@@ -97,6 +100,7 @@ class Gameboard:
     def can_move(self, direction):
         if self.active is None or self.paused or self.gameOver:
             return False
+        self.boardCleared = False
 
         active = self.active.get_matrix()
         for r in range(4):

@@ -66,7 +66,17 @@ class TetrisRender
         if (data.isGameover === true)
         {
             this.#drawMessage("Perdu !", "red", 30);
-            this.jsConfetti.addConfetti();
+            this.jsConfetti.addConfetti({
+                emojis: ['😭', '🪦', '☠️ ', '😢', '🥷', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧', '⚰️', '😱', '🤧',
+                    '😭', '🪦', '☠️ ', '😢', '⚰️', '😱', '🤧'],
+                confettiNumber: 2,
+                confettiRadius: 1
+            });
         }
         else if(data.isPaused)
         {
@@ -76,6 +86,8 @@ class TetrisRender
         if(data.score !== undefined)
         {
             const str = "score: " + data.score;
+            if(data.boardCleared === true)
+                this.jsConfetti.addConfetti();
             this.ctx.font = this.ctx.font.replace(/\d+px/, 12 + "px");
 
             const textSize = this.ctx.measureText(str);
