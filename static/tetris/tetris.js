@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () =>
 
     const screenHeight = window.innerHeight - 28*2;
 
-    canvas.setAttribute("width", (screenHeight * 0.6)+"px");
+    canvas.setAttribute("width", (screenHeight)+"px");
     canvas.setAttribute("height", screenHeight + "px");
 
     document.getElementById("tetrisDiv").appendChild(canvas);
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () =>
     confettiCanvas.style.top = '0 px';
     confettiCanvas.style.left = '0 px';
 
-    const tetrisRender = new TetrisRender(ctx, confettiCanvas);
+    const tetrisRender = new TetrisRender(ctx, confettiCanvas, screenHeight * 0.6, screenHeight * 0.4);
 
     const socket = new WebSocket('ws://' + location.host + '/ws-game');
 

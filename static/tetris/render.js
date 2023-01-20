@@ -3,14 +3,16 @@ class TetrisRender
     /**
      * @param {CanvasRenderingContext2D} ctx
      * @param confettiCanvas
+     * @param {number} canvasWidth largeur de dessin du canvas (< taille réelle)
+     * @param {number} textWidth largeur pour le dessin du text
      * @param rows
      * @param cols
      */
-    constructor(ctx, confettiCanvas,  rows = 20, cols = 10)
+    constructor(ctx, confettiCanvas, canvasWidth, textWidth, rows = 20, cols = 10)
     {
         this.colors = ['cyan', 'orange', 'blue', 'yellow', 'red', 'green', 'purple'];
 
-        this.width = ctx.canvas.width;
+        this.width = ctx.canvas.width < canvasWidth ? ctx.canvas.width * 0.9 : canvasWidth;
         this.height = ctx.canvas.height;
 
         this.block_h = this.height / rows;
@@ -19,6 +21,7 @@ class TetrisRender
         this.ctx = ctx;
         this.cols = cols;
         this.rows = rows;
+        this.textWidth = this.width + textWidth < ctx.canvas.width ? textWidth : ctx.canvas.width * 0.1;
 
         this.jsConfetti = new JSConfetti({ confettiCanvas });
     }
@@ -30,8 +33,11 @@ class TetrisRender
     {
         const board = data.titles;
 
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width + this.textWidth, this.height);
         this.ctx.strokeStyle = 'black';
+
+        this.ctx.fillStyle = "rgba(255,255,255,0.81)"
+        this.ctx.fillRect(this.width, 0, this.textWidth, this.height);
 
         for (let x = 0; x < this.cols; ++x) {
             for (let y = 0; y < this.rows; ++y) {
@@ -67,7 +73,19 @@ class TetrisRender
             this.#drawMessage("Jeu en pause", "cyan", 30);
         }
 
+        if(data.score !== undefined)
+        {
+            const str = "score: " + data.score;
+            this.ctx.font = this.ctx.font.replace(/\d+px/, 12 + "px");
+
+            const textSize = this.ctx.measureText(str);
+
+            this.ctx.fillStyle = "black";
+            this.ctx.fillText(str, this.width + (this.textWidth/2-textSize.width/2), this.height - 15);
+        }
+
         this.ctx.strokeRect(0, 0, this.width, this.height);
+        this.ctx.strokeRect(0, 0, this.width + this.textWidth, this.height);
     }
 
     /**
