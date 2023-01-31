@@ -13,8 +13,10 @@ class Sidebar:
 
     # initializes a sidebar or menu depending on current game state
     def __init__(self):
+        self.upNext = []
         self.isMenu = False
-        self.upNext = generate_up_next()
+
+        self.reset()
 
     # randomly generates 3 tetrominoes that are coming up next
 
@@ -22,3 +24,6 @@ class Sidebar:
     def update(self):
         self.upNext.append(get_random_tetromino())
         return self.upNext.pop(0)
+
+    def reset(self):
+        self.upNext = generate_up_next()

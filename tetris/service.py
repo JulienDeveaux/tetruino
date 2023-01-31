@@ -69,6 +69,7 @@ class TetrisService:
 
     def restart(self):
         self.gameboard.new_game()
+        self.gameController.sidebar.reset()
 
     def descent(self):
         self.gameController.descent()
