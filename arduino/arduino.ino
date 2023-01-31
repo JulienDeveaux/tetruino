@@ -1,7 +1,7 @@
-#include "WiFi.h"
-#include "WiFiUdp.h"
-#include "ESPmDNS.h"
 #include "WebServer.h"
+
+// gestionnaire de carte supp: https://dl.espressif.com/dl/package_esp32_index.json
+// lib carte to add: esp32 1.0.6
 
 int ledPin = 2; // pin info wifi (bleu)
 const char* ssid = "Pixel6a";
@@ -21,7 +21,6 @@ int LedLineCleared = 34;
 
 char* serverAddr = "192.168.233.89"; // la clairvoyance n'a pas fonctionnée :'(
 
-WiFiUDP Udp;
 WiFiClient curl;
 WebServer server(80);
 
@@ -60,13 +59,6 @@ void setup()
 
   Serial.print("Est connecte au reseau avec ");
   Serial.println(WiFi.localIP());
-
-  if (!MDNS.begin("ESP32_Browser")) {
-        Serial.println("Error setting up MDNS responder!");
-        while(1){
-            delay(1000);
-        }
-    }
 
     if(curl.connect(serverAddr, 5000))
     {
@@ -128,30 +120,6 @@ void onNotFound()
   server.send(404, "text/html", "no");
 }
 
-void browseService(const char * service, const char * proto){
-    Serial.printf("Browsing for service _%s._%s.local. ... ", service, proto);
-    int n = MDNS.queryService(service, proto);
-    if (n == 0) {
-        Serial.println("no services found");
-    } else {
-        Serial.print(n);
-        Serial.println(" service(s) found");
-        for (int i = 0; i < n; ++i) {
-            // Print details for each service found
-            Serial.print("  ");
-            Serial.print(i + 1);
-            Serial.print(": ");
-            Serial.print(MDNS.hostname(i));
-            Serial.print(" (");
-            Serial.print(MDNS.IP(i));
-            Serial.print(":");
-            Serial.print(MDNS.port(i));
-            Serial.println(")");
-        }
-    }
-    Serial.println();
-}
-
 void loop()
 {
   delay(100);
@@ -173,7 +141,6 @@ void loop()
     {
       Serial.println("send broadcast");
 
-      browseService("http", "tcp");
       // pas de suite pour le moment
     }
     else
