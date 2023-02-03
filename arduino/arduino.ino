@@ -17,9 +17,8 @@ int ButtonPause = 25; // Bouton pause
 
 int LedPause = 26;
 int LedOver = 27;
-int LedLineCleared = 34;
 
-char* serverAddr = "192.168.233.89"; // la clairvoyance n'a pas fonctionnée :'(
+char* serverAddr = "192.168.254.89"; // la clairvoyance n'a pas fonctionnée :'(
 
 WiFiClient curl;
 WebServer server(80);
@@ -36,7 +35,6 @@ void setup()
 
   pinMode(LedPause, OUTPUT);
   pinMode(LedOver, OUTPUT);
-  pinMode(LedLineCleared, OUTPUT);
 
   // Lorsqu'on pousse sur le bouton, la mise à la masse
   // active la résistance de PullUp.
@@ -64,11 +62,12 @@ void setup()
     {
       String endCmd = "  HTTP/1.1";
       String startCmd = "GET /register_gamepad";
+      String host = "Host: ";
 
       Serial.println(startCmd);
 
       curl.println(startCmd);
-      curl.println("Host:192.168.233.89");
+      curl.println(host + serverAddr);
       curl.println("Connection: close");
       curl.println();
     }
@@ -84,29 +83,20 @@ void onGet()
   String data = server.arg("data");
   String score = server.arg("score");
 
+  digitalWrite(LedPause, LOW);
+  digitalWrite(LedOver, LOW);
+
   if(data == "0")
   {
     Serial.println("gameOver");
 
-    digitalWrite(LedPause, LOW);
     digitalWrite(LedOver, HIGH);
-    digitalWrite(LedLineCleared, LOW);
   }
   else if(data == "1")
   {
     Serial.println("paused");
 
     digitalWrite(LedPause, HIGH);
-    digitalWrite(LedOver, LOW);
-    digitalWrite(LedLineCleared, LOW);
-  }
-  else if(data == "2")
-  {
-    Serial.println("Line cleared");
-
-    digitalWrite(LedPause, LOW);
-    digitalWrite(LedOver, LOW);
-    digitalWrite(LedLineCleared, HIGH);
   }
 
   Serial.println(score);
@@ -120,15 +110,37 @@ void onNotFound()
   server.send(404, "text/html", "no");
 }
 
+void sendCmd(int cmd)
+{
+  if(curl.connect(serverAddr, 5000))
+  {
+    String endCmd = "  HTTP/1.1";
+    String startCmd = "GET /commande/";
+
+    String strCmd = startCmd + cmd + endCmd;
+
+    curl.println(strCmd);
+    curl.println("Host:192.168.233.89");
+    curl.println("Connection: close");
+    curl.println();
+
+    Serial.print("cmd sended ");
+    Serial.println(cmd);
+  }
+  else
+  {
+    Serial.println("ConnectionFailed");
+  }
+}
+
 void loop()
 {
   delay(100);
 
-  int x, y, btn;
+  int x, y;
 
   x = ceil(analogRead (JoyStick_X) * (5.0 / 1023.0));
   y = ceil(analogRead (JoyStick_Y) * (5.0 / 1023.0));
-  btn = digitalRead (ButtonReset);
 
   if (WiFi.status() == WL_CONNECTED)
   {
@@ -145,34 +157,23 @@ void loop()
     }
     else
     {
-      server.handleClient();
+       server.handleClient();
 
-      if(xValue > 5 || yValue > 5)
+      if(digitalRead(ButtonPause) == HIGH)
+      {
+        sendCmd(4);
+      }
+      else if(digitalRead (ButtonReset) == HIGH)
+      {
+        sendCmd(5);
+      }
+      else if(xValue > 5 || yValue > 5)
       {
         int xCmd = xValue > 5 ? 10 - x > 0 ? 2 : 3 : -1;
         int yCmd = yValue > 5 ? 10 - y > 0 ? 0 : 1 : -1;
 
-        if(curl.connect(serverAddr, 5000))
-        {
-          String endCmd = "  HTTP/1.1";
-          String startCmd = "GET /commande/";
-
-          String strCmd = startCmd + + (xCmd > -1 ? xCmd : yCmd) + endCmd;
-
-          curl.println(strCmd);
-          curl.println("Host:192.168.233.89");
-          curl.println("Connection: close");
-          curl.println();
-
-          Serial.println("cmd sended");
-        }
-        else
-        {
-          Serial.println("ConnectionFailed");
-        }
+        sendCmd(xCmd > -1 ? xCmd : yCmd);
       }
-
-
     }
   }
   else
